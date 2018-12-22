@@ -78,13 +78,15 @@ def sanitize_args():
 
 def main(input_args):
     client = Client.from_token(input_args.token)
-    #print("Getting groups...")
-    #print_groups(client)
     if client is not None:
         stats_group = client.groups.get(input_args.groupid)
-        print("Refreshing groups...")
-        stats_group.refresh_from_server()
-        dump_chat_history_to_file(stats_group, "out.csv")
+        
+        # Comment me out
+        print_members(get_members(stats_group))
+        
+        #print("Refreshing groups...")
+        #stats_group.refresh_from_server()
+        #dump_chat_history_to_file(stats_group, "out.csv")
 
 if __name__ == '__main__':
     input_args = sanitize_args()
