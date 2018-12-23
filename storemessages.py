@@ -3,47 +3,54 @@
 import csv
 import operator
 import sys
+import datetime
 from elasticsearch import Elasticsearch
+
+def convert_epoch_to_timestamp(epoch_seconds):
+    value = datetime.datetime.fromtimestamp(epoch_seconds)
+    return value.strftime('%m-%d-%Y %H:%M:%S')
 
 def get_new_index_mapping():
     mapping_string = '''
     {
         "mappings": {
-            "properties": {
-                "created_at": {
-                    "type": "date",
-                    "format": "MM/dd/YYY HH::mm::ss"
-                },
-                "liked_by": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
+            "messages": {
+                "properties": {
+                    "created_at": {
+                        "type": "date",
+                        "format": "MM-dd-YYYY HH:mm:ss||epoch_second"
+                    },
+                    "liked_by": {
+                        "type": "text",
+                        "fields": {
+                            "keyword": {
+                                "type": "keyword",
+                                "ignore_above": 256
+                            }
                         }
-                    }
-                },
-                "likes": {
-                    "type": "long"
-                },
-                "msg": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                          "type": "keyword",
-                          "ignore_above": 256
-                         }
-                    }
-                },
-                "name": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
+                    },
+                    "likes": {
+                        "type": "long"
+                    },
+                    "msg": {
+                        "type": "text",
+                        "fields": {
+                            "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                             }
                         }
-                    }
-                }                
+                    },
+                    "name": {
+                        "type": "text",
+                        "fields": {
+                            "keyword": {
+                                "type": "keyword",
+                                "ignore_above": 256
+                            }
+                        }
+                    }                
+                }
             }
         }
     }
@@ -73,9 +80,10 @@ def main():
         print("Index exists!")
     
     print("Inserting doc...")
-    es.index(index=index_name, doc_type=default_doc_type, id=1, body = {
+
+    es.index(index=index_name, doc_type=default_doc_type, id=2, body = {
         'name': 'craig',
-        'created_at': 1545519287,
+        'created_at': '1545524182',
         'likes': 1,
         'msg':'helloworld',
         'liked_by': ['josh', 'aaron']
